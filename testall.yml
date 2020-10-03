@@ -46,8 +46,9 @@ stages:
       projects: '**/*.csproj'
       arguments: '--configuration $(buildConfiguration)' # Update this to match your need
       - bash: echo "B1"
-  	
-  - job: B2
+
+- stage: C 	
+  - job: C1
   steps:
   # ...
   # do this after other tasks such as building
@@ -56,4 +57,20 @@ stages:
       command: test
       projects: '**/*Tests/*.csproj'
       arguments: '--configuration $(buildConfiguration)'
-      - bash: echo "B2"
+      - bash: echo "C1"
+      
+  -job: C2
+  steps:
+  - task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: 'test'
+    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    publishTestResults: true
+    projects: '**/test-library/*.csproj' # update with your test project directory
+
+  - task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
