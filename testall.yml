@@ -1,0 +1,56 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+variables:
+  buildConfiguration: 'Release'
+
+jobs:
+- job: A
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '5.0.x'
+    includePreviewVersions: true # Required for preview versions
+
+- task: UseDotNet@2
+  inputs:
+    version: '3.0.x'
+    packageType: runtime
+    - bash: echo "A"
+    
+- job: B
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET Core SDK'
+  inputs:
+    version: 5.0.x
+    performMultiLevelLookup: true
+    includePreviewVersions: true # Required for preview versions
+    - bash: echo "B"
+    
+- job: C
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)' # Update this to match your need
+	- bash: echo "C"
+	
+- job: D
+steps:
+# ...
+# do this after other tasks such as building
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+	- bash: echo "D"
