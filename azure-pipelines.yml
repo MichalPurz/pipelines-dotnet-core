@@ -7,15 +7,123 @@ trigger:
 - master
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   buildConfiguration: 'Release'
 
-steps:
-- task: DotNetCoreCLI@2
-  displayName: Build
+stages:
+- stage: A
+  jobs:
+  - job: A1
+
+  steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '5.0.x'
+      includePreviewVersions: true # Required for preview versions
+  
+  - task: UseDotNet@2
+    inputs:
+      version: '3.0.x'
+      packageType: runtime
+      - bash: echo "A1"
+      
+  - job: A2
+  
+  steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET Core SDK'
+    inputs:
+      version: 5.0.x
+      performMultiLevelLookup: true
+      includePreviewVersions: true # Required for preview versions
+      - bash: echo "A2"
+      
+- stage: B      
+  - job: B1
+  
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: Build
+    inputs:
+      command: build
+      projects: '**/*.csproj'
+      arguments: '--configuration $(buildConfiguration)' # Update this to match your need
+      - bash: echo "B1"
+
+- stage: C 	
+  - job: C1
+  steps:
+  # ...
+  # do this after other tasks such as building
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: test
+      projects: '**/*Tests/*.csproj'
+      arguments: '--configuration $(buildConfiguration)'
+      - bash: echo "C1"
+      
+  -job: C2
+  steps:
+  - task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
   inputs:
-    command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)' # Update this to match your need
+    command: 'test'
+    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    publishTestResults: true
+    projects: '**/test-library/*.csproj' # update with your test project directory
+
+  - task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage report'
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
+    
+  - stage: D
+   - job: D1
+   steps:
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+# this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'myWebsiteName'
+    
+  - stage: E
+   - job: E1
+   steps:
+# ...
+# do this near the end of your pipeline in most cases
+- script: dotnet pack /p:PackageVersion=$(version)  # define version variable elsewhere in your pipeline
+- task: NuGetAuthenticate@0
+  input:
+    nuGetServiceConnections: '<Name of the NuGet service connection>'
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    nuGetFeedType: external
+    publishFeedCredentials: '<Name of the NuGet service connection>'
+    versioningScheme: byEnvVar
+    versionEnvVar: version
+    
+   -stage: F
+    - job: F1
+    steps:
+# ...
+# do this after you've built your app, near the end of your pipeline in most cases
+# for example, you do this before you deploy to an Azure web app on Windows
+- task: DotNetCoreCLI@2
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
