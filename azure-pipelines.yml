@@ -27,7 +27,7 @@ stages:
     inputs:
       version: '3.0.x'
       packageType: runtime
-      - bash: echo "A1"
+      
       
   - job: A2
   
@@ -38,7 +38,7 @@ stages:
       version: 5.0.x
       performMultiLevelLookup: true
       includePreviewVersions: true # Required for preview versions
-      - bash: echo "A2"
+      
       
 - stage: B      
   - job: B1
@@ -50,7 +50,7 @@ stages:
       command: build
       projects: '**/*.csproj'
       arguments: '--configuration $(buildConfiguration)' # Update this to match your need
-      - bash: echo "B1"
+      
 
 - stage: C 	
   - job: C1
@@ -62,7 +62,7 @@ stages:
       command: test
       projects: '**/*Tests/*.csproj'
       arguments: '--configuration $(buildConfiguration)'
-      - bash: echo "C1"
+      
       
   -job: C2
   steps:
