@@ -65,14 +65,14 @@ stages:
       projects: '**/*Tests/*.csproj'
       arguments: '--configuration $(buildConfiguration)'
       
- # - job: C2
- # steps:
- # - task: DotNetCoreCLI@2
- #   displayName: 'Install dotnetsay'
- #   inputs:
- #     command: custom
- #     custom: tool
- #     arguments: 'install -g dotnetsay'
+  - job: C2
+  steps:
+  - task: DotNetCoreCLI@2
+    displayName: 'Install dotnetsay'
+    inputs:
+      command: custom
+      custom: tool
+      arguments: 'install -g dotnetsay'
       
   -job: C3
   steps:
