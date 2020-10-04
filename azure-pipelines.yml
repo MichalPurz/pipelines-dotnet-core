@@ -40,7 +40,8 @@ stages:
       includePreviewVersions: true # Required for preview versions
       
       
-- stage: B      
+- stage: B
+  jobs:
   - job: B1
   
   steps:
@@ -52,7 +53,8 @@ stages:
       arguments: '--configuration $(buildConfiguration)' # Update this to match your need
       
 
-- stage: C 	
+- stage: C 
+  jobs:
   - job: C1
   steps:
   # ...
@@ -81,6 +83,7 @@ stages:
     summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
     
   - stage: D
+    jobs:
    - job: D1
    steps:
 
@@ -98,6 +101,7 @@ stages:
     artifactName: 'myWebsiteName'
     
   - stage: E
+   jobs:
    - job: E1
    steps:
 # ...
@@ -115,6 +119,7 @@ stages:
     versionEnvVar: version
     
    -stage: F
+   jobs:
     - job: F1
     steps:
 # ...
