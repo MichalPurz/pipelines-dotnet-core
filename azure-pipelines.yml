@@ -65,16 +65,24 @@ stages:
       projects: '**/*Tests/*.csproj'
       arguments: '--configuration $(buildConfiguration)'
       
+ # - job: C2
+ # steps:
+ # - task: DotNetCoreCLI@2
+ #   displayName: 'Install dotnetsay'
+ #   inputs:
+ #     command: custom
+ #     custom: tool
+ #     arguments: 'install -g dotnetsay'
       
-  -job: C2
+  -job: C3
   steps:
   - task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
-  inputs:
-    command: 'test'
-    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
-    publishTestResults: true
-    projects: '**/test-library/*.csproj' # update with your test project directory
+    displayName: 'dotnet test'
+    inputs:
+      command: 'test'
+      arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+      publishTestResults: true
+      #projects: '**/test-library/*.csproj' # update with your test project directory
 
   - task: PublishCodeCoverageResults@1
   displayName: 'Publish code coverage report'
