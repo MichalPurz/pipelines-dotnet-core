@@ -17,7 +17,7 @@ stages:
   jobs:
   - job: A1
 
-  steps:
+  #steps:
   - task: UseDotNet@2
     inputs:
       version: '5.0.x'
@@ -44,7 +44,7 @@ stages:
   jobs:
   - job: B1
   
-  steps:
+  #steps:
   - task: DotNetCoreCLI@2
     displayName: Build
     inputs:
@@ -56,7 +56,7 @@ stages:
 - stage: C 
   jobs:
   - job: C1
-  steps:
+  #steps:
   - task: DotNetCoreCLI@2
     displayName: 'Install dotnetsay'
     inputs:
