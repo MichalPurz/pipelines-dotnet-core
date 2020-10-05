@@ -111,7 +111,7 @@ stages:
 #    versionEnvVar: version
     
   - stage: F
-  jobs:
+  #jobs:
   - job: F1
     steps:
     # ...
