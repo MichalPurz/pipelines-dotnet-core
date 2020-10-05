@@ -12,6 +12,11 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
+stages:
+- stage: A
+  jobs:
+  - job: A1
+
 steps:
 - task: UseDotNet@2
   inputs:
@@ -24,7 +29,7 @@ steps:
     packageType: runtime
     
     
-
+- job: A2
 
 #steps:
 - task: UseDotNet@2
@@ -35,7 +40,11 @@ steps:
     includePreviewVersions: true # Required for preview versions
     
     
+stage: B
+jobs:
+- job: B1
 
+steps:
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
@@ -44,7 +53,10 @@ steps:
     arguments: '--configuration $(buildConfiguration)' # Update this to match your need
     
 
-
+stage: C 
+jobs:
+- job: C1
+steps:
 - task: DotNetCoreCLI@2
   displayName: 'Install dotnetsay'
   inputs:
@@ -52,7 +64,7 @@ steps:
     custom: tool
     arguments: 'install -g dotnetsay'
     
-
+- job: C2
 #steps:
 # ...
 # do this after other tasks such as building
@@ -62,7 +74,10 @@ steps:
     projects: '**/*Tests/*.csproj'
     arguments: '--configuration $(buildConfiguration) --collect "Code coverage"'
   
-
+stage: D
+jobs:
+- job: D1
+steps:
 
 - task: DotNetCoreCLI@2
   inputs:
@@ -79,7 +94,10 @@ steps:
   
 
   
-
+stage: F
+jobs:
+- job: F1
+steps:
 # ...
 # do this after you've built your app, near the end of your pipeline in most cases
 # for example, you do this before you deploy to an Azure web app on Windows
