@@ -110,9 +110,9 @@ stages:
 #    versioningScheme: byEnvVar
 #    versionEnvVar: version
     
-   -stage: F
-   jobs:
-    - job: F1
+  - stage: F
+  jobs:
+  - job: F1
     steps:
     # ...
     # do this after you've built your app, near the end of your pipeline in most cases
